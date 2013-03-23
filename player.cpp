@@ -511,6 +511,39 @@ void player::update_bodytemp(game *g) // TODO bionics, diseases and humidity (no
  if (morale_pen > 0 && int(g->turn) % 10 == 0) add_morale(MORALE_HOT,  -2, -abs(morale_pen));
 }
 
+void player::update_htf(game *g) {
+ if ((!has_trait(PF_LIGHTEATER) || !one_in(3)) &&
+     (!has_bionic(bio_recycler) || g->turn % 300 == 0))
+  hunger++;
+ if ((!has_bionic(bio_recycler) || g->turn % 100 == 0) &&
+     (!has_trait(PF_PLANTSKIN) || !one_in(5)))
+  thirst++;
+ fatigue++;
+}
+
+void player::update_pain() {
+ if (pain > 0)
+  pain -= 1 + int(pain / 10);
+ else if (pain < 0)
+  pain++;
+}
+
+void player::update_radiation() {
+ if (radiation > 1 && one_in(3))
+  radiation--;
+}
+
+void player::mutation_healing_effects() {
+ if (has_trait(PF_FASTHEALER2) && one_in(5))
+  healall(1);
+ if (has_trait(PF_REGEN) && one_in(2))
+  healall(1);
+ if (has_trait(PF_ROT2) && one_in(5))
+  hurtall(1);
+ if (has_trait(PF_ROT3) && one_in(2))
+  hurtall(1);
+}
+
 void player::temp_equalizer(body_part bp1, body_part bp2)
 {
  int temp_diff = temp_cur[bp1] - temp_cur[bp2];  // Positive if bp1 is warmer
@@ -5375,4 +5408,17 @@ SkillLevel& player::skillLevel(size_t id) {
 
 SkillLevel& player::skillLevel(Skill *_skill) {
   return _skills[_skill];
+}
+
+bool player::check_overdose(game *g) {
+ if (stim > 250) {
+  g->add_msg("You have a sudden heart attack!");
+  hp_cur[hp_torso] = 0;
+  return true;
+ } else if (stim < -200 || pkill > 240) {
+  g->add_msg("Your breathing stops completely.");
+  hp_cur[hp_torso] = 0;
+  return true;
+ }
+ return false;
 }

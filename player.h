@@ -63,6 +63,10 @@ public:
  void reset(game *g = NULL);// Resets movement points, stats, applies effects
  void update_morale();	// Ticks down morale counters and removes them
  void update_bodytemp(game *g);  // Maintains body temperature
+ void update_htf(game *g); // Update hunger, thirst and fatique
+ void update_pain(); // Update pain
+ void update_radiation(); // Update radiation
+ void mutation_healing_effects();
  int  current_speed(game *g = NULL); // Number of movement points we get a turn
  int  run_cost(int base_cost); // Adjust base_cost
  int  swim_speed();	// Our speed when swimming
@@ -257,6 +261,8 @@ public:
  bool has_item(item *it);		// Has a specific item
  bool has_mission_item(int mission_id);	// Has item with mission_id
  std::vector<int> has_ammo(ammotype at);// Returns a list of indices of the ammo
+
+ bool check_overdose(game *g);
 
 // ---------------VALUES-----------------
  int id;	// A unique ID number, assigned by the game class
