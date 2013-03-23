@@ -1,7 +1,9 @@
 cataclysm
+cataclysm.exe
 data/*.template
 save/
 obj/
+objwin/
 debug.log
 logg.txt
 bindist/

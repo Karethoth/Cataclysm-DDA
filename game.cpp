@@ -322,23 +322,12 @@ bool game::do_turn()
  if (turn.hour == 0 && turn.minute == 0 && turn.second == 0) // Midnight!
   cur_om.process_mongroups();
 
+
 // Check if we've overdosed... in any deadly way.
- if (u.stim > 250) {
-  add_msg("You have a sudden heart attack!");
-  u.hp_cur[hp_torso] = 0;
- } else if (u.stim < -200 || u.pkill > 240) {
-  add_msg("Your breathing stops completely.");
-  u.hp_cur[hp_torso] = 0;
- }
+ u.check_overdose(this);
 
  if (turn % 50 == 0) {	// Hunger, thirst, & fatigue up every 5 minutes
-  if ((!u.has_trait(PF_LIGHTEATER) || !one_in(3)) &&
-      (!u.has_bionic(bio_recycler) || turn % 300 == 0))
-   u.hunger++;
-  if ((!u.has_bionic(bio_recycler) || turn % 100 == 0) &&
-      (!u.has_trait(PF_PLANTSKIN) || !one_in(5)))
-   u.thirst++;
-  u.fatigue++;
+  u.update_htf(this);
   if (u.fatigue == 192 && !u.has_disease(DI_LYING_DOWN) &&
       !u.has_disease(DI_SLEEP)) {
    if (u.activity.type == ACT_NULL)
@@ -358,22 +347,10 @@ bool game::do_turn()
    u.charge_power(1);
  }
  if (turn % 300 == 0) {	// Pain up/down every 30 minutes
-  if (u.pain > 0)
-   u.pain -= 1 + int(u.pain / 10);
-  else if (u.pain < 0)
-   u.pain++;
+  u.update_pain();
 // Mutation healing effects
-  if (u.has_trait(PF_FASTHEALER2) && one_in(5))
-   u.healall(1);
-  if (u.has_trait(PF_REGEN) && one_in(2))
-   u.healall(1);
-  if (u.has_trait(PF_ROT2) && one_in(5))
-   u.hurtall(1);
-  if (u.has_trait(PF_ROT3) && one_in(2))
-   u.hurtall(1);
-
-  if (u.radiation > 1 && one_in(3))
-   u.radiation--;
+  u.mutation_healing_effects();
+  u.update_radiation();
   u.get_sick(this);
 // Auto-save on the half-hour if autosave is enabled
   if (OPTIONS[OPT_AUTOSAVE])
@@ -398,7 +375,7 @@ bool game::do_turn()
    draw();
 
   if(handle_action())
-	  ++moves_since_last_save;
+   ++moves_since_last_save;
 
   if (is_game_over()) {
    cleanup_at_end();
