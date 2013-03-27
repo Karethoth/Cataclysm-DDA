@@ -53,7 +53,7 @@ bool tutorial_game::init(game *g)
  return true;
 }
 
-void tutorial_game::per_turn(game *g)
+special_game_return tutorial_game::per_turn(game *g)
 {
  if (g->turn == HOURS(12)) {
   add_message(g, LESSON_INTRO);
@@ -81,6 +81,7 @@ void tutorial_game::per_turn(game *g)
     i = g->m.i_at(g->u.posx, g->u.posy).size();
    }
   }
+  return SGAME_RETURN_CONTINUE_TURN;
  }
 
  bool showed_message = false;

@@ -17,6 +17,12 @@ SGAME_DEFENSE,
 NUM_SPECIAL_GAMES
 };
 
+enum special_game_return {
+SGAME_RETURN_NEXT_TURN,
+SGAME_RETURN_CONTINUE_TURN,
+SGAME_RETURN_END_GAME
+};
+
 std::string special_game_name(special_game_id id);
 special_game* get_special_game(special_game_id id);
 
@@ -26,7 +32,7 @@ struct special_game
 // init is run when the game begins
  virtual bool init(game *g) { return true; };
 // per_turn is run every turn--before any player actions
- virtual void per_turn(game *g) { };
+ virtual special_game_return per_turn(game *g) { };
 // pre_action is run after a keypress, but before the game handles the action
 // It may modify the action, e.g. to cancel it
  virtual void pre_action(game *g, action_id &act) { };
@@ -68,7 +74,7 @@ struct tutorial_game : public special_game
 {
  virtual special_game_id id() { return SGAME_TUTORIAL; };
  virtual bool init(game *g);
- virtual void per_turn(game *g);
+ virtual special_game_return per_turn(game *g);
  virtual void pre_action(game *g, action_id &act);
  virtual void post_action(game *g, action_id act);
  virtual void game_over(game *g) { };
@@ -122,7 +128,7 @@ struct defense_game : public special_game
 
  virtual special_game_id id() { return SGAME_DEFENSE; };
  virtual bool init(game *g);
- virtual void per_turn(game *g);
+ virtual special_game_return per_turn(game *g);
  virtual void pre_action(game *g, action_id &act);
  virtual void post_action(game *g, action_id act);
  virtual void game_over(game *g);
