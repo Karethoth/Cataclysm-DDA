@@ -86,7 +86,7 @@ bool defense_game::init(game *g)
  return true;
 }
 
-void defense_game::per_turn(game *g)
+special_game_return defense_game::per_turn(game *g)
 {
  if (!thirst)
   g->u.thirst = 0;
@@ -102,6 +102,7 @@ void defense_game::per_turn(game *g)
   }
   spawn_wave(g);
  }
+ return SGAME_RETURN_CONTINUE_TURN;
 }
 
 void defense_game::pre_action(game *g, action_id &act)

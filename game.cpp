@@ -315,7 +315,12 @@ bool game::do_turn()
   return true;
  }
 // Actual stuff
- gamemode->per_turn(this);
+ bool gamemode_return = gamemode->per_turn(this);
+ if(gamemode_return == SGAME_RETURN_NEXT_TURN)
+  return false;
+ else if(gamemode_return == SGAME_RETURN_END_GAME)
+  return true;
+
  turn.increment();
  process_events();
  process_missions();
