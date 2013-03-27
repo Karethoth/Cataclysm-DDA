@@ -315,7 +315,7 @@ bool game::do_turn()
   return true;
  }
 // Actual stuff
- bool gamemode_return = gamemode->per_turn(this);
+ special_game_return gamemode_return = gamemode->per_turn(this);
  if(gamemode_return == SGAME_RETURN_NEXT_TURN)
   return false;
  else if(gamemode_return == SGAME_RETURN_END_GAME)
